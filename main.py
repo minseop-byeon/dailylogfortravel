@@ -1,5 +1,6 @@
 import requests
 import os
+from datetime import datetime
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -12,4 +13,7 @@ def send_message(text):
     }
     requests.post(url, data=data)
 
-send_message("서버 연결 테스트 메시지입니다.")
+# 현재 UTC 기준 시간 (임시)
+now = datetime.utcnow().strftime("%Y년 %m월 %d일 %H:%M")
+
+send_message(f"{now} 서버 시간 기록 테스트")
