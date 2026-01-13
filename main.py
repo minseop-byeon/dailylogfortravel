@@ -1,9 +1,11 @@
-import requests
 import os
-from datetime import datetime
+import requests
+from flask import Flask, request
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
+
+app = Flask(__name__)
 
 def send_message(text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -13,7 +15,14 @@ def send_message(text):
     }
     requests.post(url, data=data)
 
-# 현재 UTC 기준 시간 (임시)
-now = datetime.utcnow().strftime("%Y년 %m월 %d일 %H:%M")
+@app.route("/log", methods=["POST"])
+def receive_log():
+    data = request.json
+    text = data.get("text", "")
+    if text:
+        send_message(text)
+        return {"status": "ok"}
+    return {"status": "no text"}, 400
 
-send_message(f"{now} 서버 시간 기록 테스트")
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
